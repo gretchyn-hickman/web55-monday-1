@@ -1,12 +1,3 @@
-
-
-
-
-
-
-
-
-
 // BUILD YOUR SERVER HERE
 const express = require('express')
 const Users = require('./users/model')
@@ -63,6 +54,22 @@ server.get('/api/users/:id', (req, res) => {
     })
 })
 
+//DELETE ENDPOINT
+server.delete('/api/users/:id', async (req, res) => {
+    const maybe = await Users.findById(req.params.id)
+    console.log(maybe)
+    if (!maybe) {
+        res.status(404).json({ message: "The user with the specified ID does not exist" })
+    } else {
+        const deleteUser = await Users.remove(req.params.id)
+        res.status(200).json(deleteUser)
+    }
+    // .then()
+    // .catch(err => {
+    //     res.status(404).json({ message: "The user with the specified ID does not exist" })
+    // })
+})
+
 // CATCH ALL
 server.use('*', (req, res) => {
     res.status(404).json({
@@ -73,4 +80,5 @@ server.use('*', (req, res) => {
 module.exports = server; // EXPORT YOUR SERVER
 
 // http get :9000/api/users
-// http post :9000/api/users name=foo bio=bar --verbose
+// http post :9000/api/users name=foo bio=bar
+// http delete :9000/api/users/W8oJC

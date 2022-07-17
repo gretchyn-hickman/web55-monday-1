@@ -1,7 +1,36 @@
 // BUILD YOUR SERVER HERE
 const express = require('express')
-
+const Users = require('./users/model')
 const server = express()
+
+server.get('/api/users', (req, res) => {
+    Users.find()
+    .then(users => {
+        console.log(users)
+        res.json(users)
+        
+    })
+    .catch(err => {
+        res.status(500).json({
+            message: 'error getting users',
+            err: err.message,
+        })
+    })
+})
+
+server.get('/api/users/:id', (req, res) => {
+    Users.findById(req.params.id)
+    .then(user => {
+        console.log(user)
+        res.json(user)
+    })
+    .catch(err => {
+        res.status(500).json({
+            message: 'error getting user by id',
+            err: err.message,
+        })
+    })
+})
 
 server.use('*', (req, res) => {
     res.status(404).json({
@@ -9,4 +38,7 @@ server.use('*', (req, res) => {
     })
 })
 
-module.exports = server; // EXPORT YOUR SERVER instead of {}
+module.exports = server; // EXPORT YOUR SERVER
+
+// http get :9000/api/users
+// http get :9000/api/users/TBzTg

@@ -1,8 +1,36 @@
+
+
+
+
+
+
+
+
+
 // BUILD YOUR SERVER HERE
 const express = require('express')
 const Users = require('./users/model')
 const server = express()
+server.use(express.json())
 
+// POST ENDPOINT
+server.post('/api/users', (req, res) => {
+    const user = req.body;
+    if (!user.name || !user.bio) {
+        res.status(400).json({ message: "Please provide name and bio for the user" })
+    } else {
+       Users.insert(user)
+       .then(stuff => {
+        res.status(201).json(stuff)
+       })
+       .catch(err => {
+        res.status(500).json({ message: "Weird Error" })
+       })
+    }
+    
+})
+
+// GET ENDPOINTS
 server.get('/api/users', (req, res) => {
     Users.find()
     .then(users => {
@@ -17,7 +45,6 @@ server.get('/api/users', (req, res) => {
         })
     })
 })
-
 server.get('/api/users/:id', (req, res) => {
     Users.findById(req.params.id)
     .then(user => {
@@ -36,6 +63,7 @@ server.get('/api/users/:id', (req, res) => {
     })
 })
 
+// CATCH ALL
 server.use('*', (req, res) => {
     res.status(404).json({
         message: 'not found'
@@ -45,4 +73,4 @@ server.use('*', (req, res) => {
 module.exports = server; // EXPORT YOUR SERVER
 
 // http get :9000/api/users
-// http get :9000/api/users/TBzTg
+// http post :9000/api/users name=foo bio=bar --verbose

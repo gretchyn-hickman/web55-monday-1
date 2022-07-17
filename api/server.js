@@ -71,6 +71,26 @@ server.delete('/api/users/:id', async (req, res) => {
     }
 })
 
+//PUT ENDPOINT
+server.put('/api/users/:id', async (req, res) => {
+    try {
+        const maybe = await Users.findById(req.params.id)
+    if (!maybe) {
+        res.status(404).json({ message: "The user with the specified ID does not exist" })
+    } else {if(!req.body.name || !req.body.bio) {
+        res.status(400).json({ message: "Please provide name and bio for the user" })
+    } else {
+        console.log("happy Path")
+        const updated = await Users.update(req.params.id, req.body)
+        res.status(200).json(updated)
+    }}
+
+    }
+    catch (err) {
+        res.status(500).json({ message: "The user information could not be modified" })
+    }
+})
+
 // CATCH ALL
 server.use('*', (req, res) => {
     res.status(404).json({
@@ -83,3 +103,5 @@ module.exports = server; // EXPORT YOUR SERVER
 // http get :9000/api/users
 // http post :9000/api/users name=foo bio=bar
 // http delete :9000/api/users/
+// http put :9000/api/users/RLhcs name=foo bio=bar
+//    
